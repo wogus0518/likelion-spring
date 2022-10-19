@@ -1,6 +1,7 @@
 package likelion.tobyspring31.dao;
 
-import com.line.domain.User;
+
+import likelion.tobyspring31.domain.User;
 
 import java.sql.*;
 import java.util.ArrayList;
