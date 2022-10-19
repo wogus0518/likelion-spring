@@ -2,12 +2,12 @@ package likelion.tobyspring31.dao;
 
 
 import likelion.tobyspring31.domain.User;
+import org.springframework.context.annotation.Bean;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
-
 
 public class UserDao {
     private final ConnectionMaker cm;
