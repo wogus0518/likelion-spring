@@ -2,7 +2,6 @@ package likelion.tobyspring31.dao;
 
 
 import likelion.tobyspring31.domain.User;
-import org.springframework.context.annotation.Bean;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -87,6 +86,30 @@ public class UserDao {
         } finally {
             close(conn, ps, rs);
         }
+    }
+
+    public void deleteAll() throws SQLException {
+        String sql = "DELETE FROM users";
+
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            conn = cm.getConnection();
+            ps = conn.prepareStatement(sql);
+
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw e;
+        } finally {
+            close(conn, ps, null);
+        }
+    }
+
+    public int getCount() throws SQLException {
+        List<User> users = findAll();
+        return users.size();
     }
 
     private void close(Connection conn, Statement stmt, ResultSet rs) {
