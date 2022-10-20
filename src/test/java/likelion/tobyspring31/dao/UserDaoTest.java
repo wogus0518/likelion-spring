@@ -17,17 +17,20 @@ class UserDaoTest {
     AnnotationConfigApplicationContext ac;
 
     @BeforeEach
+    @DisplayName("테스트 시작할 때 userDao 가져오기")
     void beforeEach() {
         ac = new AnnotationConfigApplicationContext(UserDaoFactory.class);
         userDao = ac.getBean("localUserDao", UserDao.class);
     }
 
     @AfterEach
+    @DisplayName("테스트 끝나면 테이블 삭제")
     void afterEach() throws SQLException {
         userDao.deleteAll();
     }
 
     @Test
+    @DisplayName("add(), findById() 잘 되는지")
     void addAndSelect() throws SQLException {
         String id = "01";
         User user = new User(id, "JaeHyun", "123123");
@@ -41,6 +44,7 @@ class UserDaoTest {
     }
 
     @Test
+    @DisplayName("getCount() 잘 되는지")
     void count() throws SQLException {
         User user1 = new User("01", "user1", "111");
         User user2 = new User("02", "user2", "222");
