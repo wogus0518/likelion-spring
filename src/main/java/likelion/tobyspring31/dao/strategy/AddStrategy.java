@@ -1,4 +1,4 @@
-package likelion.tobyspring31.dao;
+package likelion.tobyspring31.dao.strategy;
 
 import likelion.tobyspring31.domain.User;
 

@@ -1,4 +1,4 @@
-package likelion.tobyspring31.dao;
+package likelion.tobyspring31.dao.strategy;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
