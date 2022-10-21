@@ -25,7 +25,6 @@ class UserDaoTest {
     @BeforeEach
     @DisplayName("테스트 시작할 때 userDao 가져오기")
     void beforeEach() throws SQLException {
-        userDao.deleteAll();
         userDao = ac.getBean("localUserDao", UserDao.class);
     }
 

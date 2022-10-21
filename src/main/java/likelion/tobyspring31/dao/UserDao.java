@@ -21,25 +21,7 @@ public class UserDao {
     }
 
     public void add(User user) throws SQLException {
-        String sql = "INSERT INTO users(id, name, password) VALUES(?, ?, ?)";
-
-        Connection conn = null;
-        PreparedStatement ps = null;
-
-        try {
-            conn = cm.getConnection();
-            ps = conn.prepareStatement(sql);
-
-            ps.setString(1, user.getId());
-            ps.setString(2, user.getName());
-            ps.setString(3, user.getPassword());
-
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            throw e;
-        } finally {
-            close(conn, ps, null);
-        }
+        jdbcContextWithStatementStrategy(new AddStrategy(user));
     }
 
     public User findById(String id) throws SQLException {
@@ -93,23 +75,24 @@ public class UserDao {
         }
     }
 
-    public void deleteAll() throws SQLException {
-        String sql = "DELETE FROM users";
-
+    private void jdbcContextWithStatementStrategy(StatementStrategy stmt) throws SQLException {
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
 
         try {
             conn = cm.getConnection();
-            ps = new DeletAllStrategy().makePstmt(conn);
-
+            ps = stmt.makePreparedStatement(conn);
             ps.executeUpdate();
         } catch (SQLException e) {
             throw e;
-        } finally {
-            close(conn, ps, null);
         }
+        close(conn, ps, null);
+    }
+
+    public void deleteAll() throws SQLException {
+        StatementStrategy st = new DeletAllStrategy();
+        jdbcContextWithStatementStrategy(st);
     }
 
     public int getCount() throws SQLException {
@@ -141,10 +124,4 @@ public class UserDao {
         }
     }
 
-    public static void main(String[] args) throws SQLException {
-        UserDao userDao = new UserDao(new LocalConnectionMaker());
-        userDao.add(new User("01", "JaeHyun", "123123"));
-        User byId = userDao.findById("01");
-        System.out.println(byId.getId());
-    }
 }
