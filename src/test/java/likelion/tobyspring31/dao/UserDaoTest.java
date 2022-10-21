@@ -1,10 +1,7 @@
 package likelion.tobyspring31.dao;
 
 import likelion.tobyspring31.domain.User;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -27,7 +24,8 @@ class UserDaoTest {
 
     @BeforeEach
     @DisplayName("테스트 시작할 때 userDao 가져오기")
-    void beforeEach() {
+    void beforeEach() throws SQLException {
+        userDao.deleteAll();
         userDao = ac.getBean("localUserDao", UserDao.class);
     }
 
@@ -40,7 +38,7 @@ class UserDaoTest {
     @Test
     @DisplayName("add(), findById() 잘 되는지")
     void addAndSelect() throws SQLException {
-        String id = "01";
+        String id = "02";
         User user = new User(id, "JaeHyun", "123123");
 
         userDao.add(user);

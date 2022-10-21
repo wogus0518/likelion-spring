@@ -2,15 +2,20 @@ package likelion.tobyspring31.dao;
 
 
 import likelion.tobyspring31.domain.User;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+@Component
 public class UserDao {
+
     private final ConnectionMaker cm;
 
+    @Autowired
     public UserDao(ConnectionMaker cm) {
         this.cm = cm;
     }
@@ -32,7 +37,7 @@ public class UserDao {
             ps.executeUpdate();
         } catch (SQLException e) {
             throw e;
-        }finally {
+        } finally {
             close(conn, ps, null);
         }
     }
@@ -97,7 +102,7 @@ public class UserDao {
 
         try {
             conn = cm.getConnection();
-            ps = conn.prepareStatement(sql);
+            ps = new DeletAllStrategy().makePstmt(conn);
 
             ps.executeUpdate();
         } catch (SQLException e) {
@@ -134,5 +139,12 @@ public class UserDao {
                 e.printStackTrace();
             }
         }
+    }
+
+    public static void main(String[] args) throws SQLException {
+        UserDao userDao = new UserDao(new LocalConnectionMaker());
+        userDao.add(new User("01", "JaeHyun", "123123"));
+        User byId = userDao.findById("01");
+        System.out.println(byId.getId());
     }
 }

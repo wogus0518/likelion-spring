@@ -1,11 +1,11 @@
-package likelion.tobyspring31.dao;
+package likelion.tobyspring31.dao.abstractDao;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Map;
 
-public class LocalUserDaoImpl extends UserDaoAbstract{
+public class LocalUserDaoImpl extends UserDaoAbstract {
     @Override
     public Connection getConnection() throws SQLException {
         Map<String, String> env = System.getenv();
