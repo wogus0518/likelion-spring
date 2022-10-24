@@ -31,33 +31,25 @@ public class UserDao {
 
     public User findById(String id) {
         String sql = "SELECT * FROM users WHERE id=?";
-
-        RowMapper<User> rowMapper = new RowMapper<User>() {
-            @Override
-            public User mapRow(ResultSet rs, int rowNum) throws SQLException {
-                User user = new User(rs.getString("id"),
-                        rs.getString("name"),
-                        rs.getString("password"));
-                return user;
-            }
-        };
         return jdbcTemplate.queryForObject(sql, rowMapper, id);
-    }
-
-    public int getCount() {
-        return this.jdbcTemplate.queryForObject("select count(*) from users;", Integer.class);
     }
 
     public List<User> findAll() {
         String sql = "SELECT * FROM users";
-        RowMapper<User> rowMapper = new RowMapper<User>() {
-            @Override
-            public User mapRow(ResultSet rs, int rowNum) throws SQLException {
-                User user = new User(rs.getString("id"), rs.getString("name"),
-                        rs.getString("password"));
-                return user;
-            }
-        };
         return this.jdbcTemplate.query(sql, rowMapper);
+    }
+
+    RowMapper<User> rowMapper = new RowMapper<User>() {
+        @Override
+        public User mapRow(ResultSet rs, int rowNum) throws SQLException {
+            User user = new User(rs.getString("id"),
+                    rs.getString("name"),
+                    rs.getString("password"));
+            return user;
+        }
+    };
+
+    public int getCount() {
+        return this.jdbcTemplate.queryForObject("select count(*) from users;", Integer.class);
     }
 }
