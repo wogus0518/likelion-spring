@@ -38,14 +38,7 @@ public class UserDao {
     }
 
     public void deleteAll() throws SQLException {
-        jdbcContext.workWithStatementStrategy(new StatementStrategy() {
-            private String sql = "DELETE FROM users";
-
-            @Override
-            public PreparedStatement makePreparedStatement(Connection conn) throws SQLException {
-                return conn.prepareStatement(sql);
-            }
-        });
+        jdbcContext.executeSql("DELETE FROM users");
     }
 
     public User findById(String id) throws SQLException {

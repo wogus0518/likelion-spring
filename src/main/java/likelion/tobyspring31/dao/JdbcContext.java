@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 import javax.sql.DataSource;
 import java.sql.*;
 
-@Component
 public class JdbcContext {
     private final DataSource dataSource;
 
@@ -27,6 +26,15 @@ public class JdbcContext {
             throw e;
         }
         close(conn, pstmt, null);
+    }
+
+    public void executeSql(String sql) throws SQLException{
+        workWithStatementStrategy(new StatementStrategy() {
+            @Override
+            public PreparedStatement makePreparedStatement(Connection conn) throws SQLException {
+                return conn.prepareStatement(sql);
+            }
+        });
     }
 
     private void close(Connection conn, Statement stmt, ResultSet rs) {

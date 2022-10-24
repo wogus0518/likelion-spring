@@ -30,5 +30,4 @@ public class UserDaoFactory {
     public JdbcContext jdcbContext() {
         return new JdbcContext(localDataSource());
     }
-
 }
