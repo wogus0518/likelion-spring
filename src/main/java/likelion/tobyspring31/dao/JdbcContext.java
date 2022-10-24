@@ -39,6 +39,7 @@ public class JdbcContext {
     public void executeSql(String sql) throws SQLException{
         workWithStatementStrategy(conn -> conn.prepareStatement(sql));
     }
+
     private void close(Connection conn, Statement stmt, ResultSet rs) {
         if (rs != null) {
             try {

@@ -5,10 +5,12 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -52,7 +54,7 @@ class UserDaoTest {
     @DisplayName("findById() 실패 시나리오")
     void findByIdFail() throws SQLException {
         String id = "01";
-        assertThrows(NoSuchElementException.class, () -> userDao.findById(id));
+        assertThrows(EmptyResultDataAccessException.class, () -> userDao.findById(id));
     }
 
     @Test
@@ -75,6 +77,19 @@ class UserDaoTest {
         assertEquals(userDao.getCount(), 3);
     }
 
+    @Test
+    @DisplayName("findAll() 잘 되는지")
+    void findAll() {
+        List<User> users = userDao.findAll();
+        assertEquals(0, users.size());
+
+        userDao.add(new User("01", "user1", "111"));
+        userDao.add(new User("02", "user2", "222"));
+        userDao.add(new User("03", "user3", "333"));
+        users = userDao.findAll();
+        assertEquals(3, users.size());
+
+    }
 
     @Test
     @DisplayName("모든 빈 출력하기")

@@ -12,7 +12,7 @@ public class UserDaoFactory {
 
     @Bean
     public UserDao localUserDao() {
-        return new UserDao(jdcbContext(), localDataSource());
+        return new UserDao(localDataSource());
     }
 
     @Bean
@@ -26,8 +26,8 @@ public class UserDaoFactory {
         return dataSource;
     }
 
-    @Bean
-    public JdbcContext jdcbContext() {
-        return new JdbcContext(localDataSource());
-    }
+//    @Bean
+//    public JdbcContext jdcbContext() {
+//        return new JdbcContext(localDataSource());
+//    }
 }
