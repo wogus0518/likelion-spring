@@ -9,6 +9,7 @@ import likelion.tobyspring31.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,11 +18,11 @@ import java.util.NoSuchElementException;
 @Component
 public class UserDao {
 
-    private final ConnectionMaker cm;
+    private final DataSource dataSource;
 
     @Autowired
-    public UserDao(ConnectionMaker cm) {
-        this.cm = cm;
+    public UserDao(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     public void add(User user) throws SQLException {
@@ -47,7 +48,7 @@ public class UserDao {
         ResultSet rs = null;
 
         try {
-            conn = cm.getConnection();
+            conn = dataSource.getConnection();
             ps = conn.prepareStatement(sql);
             ps.setString(1, id);
 
@@ -75,7 +76,7 @@ public class UserDao {
         List<User> users = new ArrayList<>();
 
         try {
-            conn = cm.getConnection();
+            conn = dataSource.getConnection();
             ps = conn.prepareStatement(sql);
 
             rs = ps.executeQuery();
@@ -96,7 +97,7 @@ public class UserDao {
         ResultSet rs = null;
 
         try {
-            conn = cm.getConnection();
+            conn = dataSource.getConnection();
             pstmt = strategy.makePreparedStatement(conn); //전달받은 전략을 사용한다.
             pstmt.executeUpdate();
         } catch (SQLException e) {
