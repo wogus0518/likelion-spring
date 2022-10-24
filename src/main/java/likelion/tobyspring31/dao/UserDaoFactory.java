@@ -1,6 +1,5 @@
 package likelion.tobyspring31.dao;
 
-import likelion.tobyspring31.dao.connection.LocalConnectionMaker;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
@@ -13,7 +12,7 @@ public class UserDaoFactory {
 
     @Bean
     public UserDao localUserDao() {
-        return new UserDao(localDataSource());
+        return new UserDao(jdcbContext(), localDataSource());
     }
 
     @Bean
@@ -25,6 +24,11 @@ public class UserDaoFactory {
         dataSource.setUsername(env.get("DB_USER"));
         dataSource.setPassword(env.get("DB_PASSWORD"));
         return dataSource;
+    }
+
+    @Bean
+    public JdbcContext jdcbContext() {
+        return new JdbcContext(localDataSource());
     }
 
 }

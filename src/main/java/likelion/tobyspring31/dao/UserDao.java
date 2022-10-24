@@ -1,12 +1,8 @@
 package likelion.tobyspring31.dao;
 
 
-import likelion.tobyspring31.dao.connection.ConnectionMaker;
-import likelion.tobyspring31.dao.strategy.AddStrategy;
-import likelion.tobyspring31.dao.strategy.DeletAllStrategy;
 import likelion.tobyspring31.dao.strategy.StatementStrategy;
 import likelion.tobyspring31.domain.User;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
@@ -18,15 +14,16 @@ import java.util.NoSuchElementException;
 @Component
 public class UserDao {
 
+    private final JdbcContext jdbcContext;
     private final DataSource dataSource;
 
-    @Autowired
-    public UserDao(DataSource dataSource) {
+    public UserDao(JdbcContext jdbcContext, DataSource dataSource) {
+        this.jdbcContext = jdbcContext;
         this.dataSource = dataSource;
     }
 
     public void add(User user) throws SQLException {
-        jdbcContextWithStatementStrategy(new StatementStrategy() {
+        jdbcContext.workWithStatementStrategy(new StatementStrategy() {
             private String sql = "INSERT INTO users(id, name, password) VALUES(?, ?, ?)";
 
             @Override
@@ -36,6 +33,17 @@ public class UserDao {
                 pstmt.setString(2, user.getName());
                 pstmt.setString(3, user.getPassword());
                 return pstmt;
+            }
+        });
+    }
+
+    public void deleteAll() throws SQLException {
+        jdbcContext.workWithStatementStrategy(new StatementStrategy() {
+            private String sql = "DELETE FROM users";
+
+            @Override
+            public PreparedStatement makePreparedStatement(Connection conn) throws SQLException {
+                return conn.prepareStatement(sql);
             }
         });
     }
@@ -89,32 +97,6 @@ public class UserDao {
         } finally {
             close(conn, ps, rs);
         }
-    }
-
-    private void jdbcContextWithStatementStrategy(StatementStrategy strategy) throws SQLException {
-        Connection conn = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-
-        try {
-            conn = dataSource.getConnection();
-            pstmt = strategy.makePreparedStatement(conn); //전달받은 전략을 사용한다.
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            throw e;
-        }
-        close(conn, pstmt, null);
-    }
-
-    public void deleteAll() throws SQLException {
-        jdbcContextWithStatementStrategy(new StatementStrategy() {
-            private String sql = "DELETE FROM users";
-
-            @Override
-            public PreparedStatement makePreparedStatement(Connection conn) throws SQLException {
-                return conn.prepareStatement(sql);
-            }
-        });
     }
 
     public int getCount() throws SQLException {
