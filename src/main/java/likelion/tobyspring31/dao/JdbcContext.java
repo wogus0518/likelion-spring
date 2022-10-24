@@ -1,7 +1,6 @@
 package likelion.tobyspring31.dao;
 
 import likelion.tobyspring31.dao.strategy.StatementStrategy;
-import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -28,15 +27,18 @@ public class JdbcContext {
         close(conn, pstmt, null);
     }
 
-    public void executeSql(String sql) throws SQLException{
-        workWithStatementStrategy(new StatementStrategy() {
-            @Override
-            public PreparedStatement makePreparedStatement(Connection conn) throws SQLException {
-                return conn.prepareStatement(sql);
-            }
-        });
-    }
+//    public void executeSql(String sql) throws SQLException{
+//        workWithStatementStrategy(new StatementStrategy() {
+//            @Override
+//            public PreparedStatement makePreparedStatement(Connection conn) throws SQLException {
+//                return conn.prepareStatement(sql);
+//            }
+//        });
+//    }
 
+    public void executeSql(String sql) throws SQLException{
+        workWithStatementStrategy(conn -> conn.prepareStatement(sql));
+    }
     private void close(Connection conn, Statement stmt, ResultSet rs) {
         if (rs != null) {
             try {
