@@ -25,7 +25,18 @@ public class UserDao {
     }
 
     public void add(User user) throws SQLException {
-        jdbcContextWithStatementStrategy(new AddStrategy(user));
+        jdbcContextWithStatementStrategy(new StatementStrategy() {
+            private String sql = "INSERT INTO users(id, name, password) VALUES(?, ?, ?)";
+
+            @Override
+            public PreparedStatement makePreparedStatement(Connection conn) throws SQLException {
+                PreparedStatement pstmt = conn.prepareStatement(sql);
+                pstmt.setString(1, user.getId());
+                pstmt.setString(2, user.getName());
+                pstmt.setString(3, user.getPassword());
+                return pstmt;
+            }
+        });
     }
 
     public User findById(String id) throws SQLException {
@@ -79,24 +90,30 @@ public class UserDao {
         }
     }
 
-    private void jdbcContextWithStatementStrategy(StatementStrategy stmt) throws SQLException {
+    private void jdbcContextWithStatementStrategy(StatementStrategy strategy) throws SQLException {
         Connection conn = null;
-        PreparedStatement ps = null;
+        PreparedStatement pstmt = null;
         ResultSet rs = null;
 
         try {
             conn = cm.getConnection();
-            ps = stmt.makePreparedStatement(conn);
-            ps.executeUpdate();
+            pstmt = strategy.makePreparedStatement(conn); //전달받은 전략을 사용한다.
+            pstmt.executeUpdate();
         } catch (SQLException e) {
             throw e;
         }
-        close(conn, ps, null);
+        close(conn, pstmt, null);
     }
 
     public void deleteAll() throws SQLException {
-        StatementStrategy st = new DeletAllStrategy();
-        jdbcContextWithStatementStrategy(st);
+        jdbcContextWithStatementStrategy(new StatementStrategy() {
+            private String sql = "DELETE FROM users";
+
+            @Override
+            public PreparedStatement makePreparedStatement(Connection conn) throws SQLException {
+                return conn.prepareStatement(sql);
+            }
+        });
     }
 
     public int getCount() throws SQLException {
